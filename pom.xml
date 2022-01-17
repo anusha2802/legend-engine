@@ -90,6 +90,7 @@
         <module>legend-engine-protocol-relational</module>
         <module>legend-engine-protocol-external-store-service</module>
         <module>legend-engine-protocol-graphQL</module>
+        <module>legend-engine-protocol-persistence</module>
         <module>legend-engine-application-query</module>
         <module>legend-engine-query-pure</module>
         <module>legend-engine-query-graphQL</module>
@@ -101,6 +102,7 @@
         <module>legend-engine-test-reports</module>
         <module>legend-engine-extensions-collection-execution</module>
         <module>legend-engine-extensions-collection-generation</module>
+        <module>legend-engine-protocol-persistence</module>
     </modules>
 
     <properties>
@@ -131,7 +133,7 @@
         <snowflake.version>3.13.5</snowflake.version>
 
         <!-- Legend -->
-        <legend.pure.version>1.47.0</legend.pure.version>
+        <legend.pure.version>1.47.1-SNAPSHOT</legend.pure.version>
         <legend.shared.version>0.18.0</legend.shared.version>
 
         <!-- Dependency versions -->
