@@ -17,11 +17,11 @@ public class PersistenceCompilerExtension implements CompilerExtension {
                 ServicePersistence.class,
                 Lists.fixedSize.with(Service.class, PackageableRuntime.class),
                 (servicePersistence, context) ->
-                {
-                    return new Root_meta_pure_persist_metamodel_ServicePersistence_Impl("")
-                            ._documentation(servicePersistence.documentation)
-                            ._ownersAddAll(Lists.immutable.ofAll(servicePersistence.owners));
-                },
+                        new Root_meta_pure_persist_metamodel_ServicePersistence_Impl("")
+                                ._documentation(servicePersistence.documentation)
+                                ._ownersAddAll(Lists.immutable.ofAll(servicePersistence.owners))
+                                ._trigger(HelperPersistenceBuilder.buildEventType(servicePersistence.trigger))
+                                ._persistence(HelperPersistenceBuilder.buildPersistence(servicePersistence.persistence, context)),
                 (servicePersistence, context) -> {}
         ));
     }
