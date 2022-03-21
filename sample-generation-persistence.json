@@ -1,0 +1,14 @@
+This when supplied to legend-engine generates the needful 
+
+{
+    "clientVersion": "v1_0_0",
+    "config": {
+        "scopeElements": [
+            "cnas"
+        ]
+    },
+    "model": {
+        "_type": "text",
+        "code": "###Persistence\nPersistence cnas::TestPipe\n{\n  doc: 'test doc';\n  trigger: Manual;\n  service: cnas::TestService;\n  persister: Batch\n  {\n    connections:\n    [\n      c1:\n      #{\n        RelationalDatabaseConnection\n        {\n          store: cnas::SnowflakeStore;\n          type: Snowflake;\n          specification: Snowflake\n          {\n            name: 'test';\n            account: 'account';\n            warehouse: 'warehouseName';\n            region: 'us-east2';\n            proxyHost: 'sampleHost';\n            proxyPort: 'samplePort';\n            nonProxyHosts: 'sample';\n            accountType: MultiTenant;\n            organization: 'sampleOrganization';\n          };\n          auth: SnowflakePublic\n          {\n            publicUserName: 'name';\n            privateKeyVaultReference: 'name';\n            passPhraseVaultReference: 'name';\n          };\n        }\n      }#\n    ];\n    target: Flat\n    {\n      targetName: 's3Sink';\n      modelClass: cnas::Person;\n      deduplicationStrategy: None;\n      ingestMode: UnitemporalSnapshot\n      {\n        transactionMilestoning: BatchId\n        {\n          batchIdInFieldName: 'IN_Z';\n          batchIdOutFieldName: 'OUT_Z';\n        }\n      }\n    }\n  }\n  notifier:\n  {\n    notifyees:\n    [\n      PagerDuty\n      {\n        url: 'bugsbunny@looney.tunes';\n      }\n    ]\n  }\n}\n\n\n###Service\nService cnas::TestService\n{\n  pattern: 'url/myUrl/';\n  owners:\n  [\n    'ownerName',\n    'ownerName2'\n  ];\n  documentation: 'this is just for context';\n  autoActivateUpdates: true;\n  execution: Single\n  {\n    query: src: cnas::RawPerson[1]|$src.firstName;\n    mapping: cnas::Mapping;\n    runtime:\n    #{\n      mappings:\n      [\n        cnas::Mapping\n      ];\n    }#;\n  }\n  test: Single\n  {\n    data: 'test';\n    asserts:\n    [\n    ];\n  }\n}\n\n\n###Relational\nDatabase cnas::SnowflakeStore\n(\n  Schema SAMPLE\n  (\n    Table DEMO_TABLE\n    (\n      \"name\" VARCHAR(100) PRIMARY KEY,\n      \"age\" NUMERIC(38, 0)\n    )\n  )\n)\n\n\n###FileGeneration\nAwsPersistence cnas::awspersistenceGeneration\n{\n  scopeElements: [cnas];\n}\n\n\n###GenerationSpecification\nGenerationSpecification cnas::MyGenerationSpecification\n{\n  fileGenerations: [\n    cnas::awspersistenceGeneration\n  ];\n}\n\n\n###Pure\nClass cnas::Person\n{\n  firstName: String[1];\n  lastName: String[1];\n  age: Integer[1];\n}\n\nClass cnas::RawPerson\n{\n  firstName: String[1];\n  lastName: String[1];\n  age: Integer[1];\n}\n\n\n###Mapping\nMapping cnas::Mapping\n(\n)\n"
+    }
+}
