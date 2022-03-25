@@ -36,7 +36,7 @@ Persistence cnas::TestPipe
     targetShape: Flat
     {
       targetName: 's3Sink';
-      modelClass: test::ServiceResult;
+      modelClass: cnas::Person;
     }
     ingestMode: UnitemporalSnapshot
     {
