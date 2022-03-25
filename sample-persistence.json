@@ -6,47 +6,44 @@ Persistence cnas::TestPipe
   service: cnas::TestService;
   persister: Batch
   {
-    connections:
-    [
-      c1:
-      #{
-        RelationalDatabaseConnection
+  binding: cnas::TestBinding;
+    connection:
+    #{
+      RelationalDatabaseConnection
+      {
+        store: cnas::SnowflakeStore;
+        type: Snowflake;
+        specification: Snowflake
         {
-          store: cnas::SnowflakeStore;
-          type: Snowflake;
-          specification: Snowflake
-          {
-            name: 'test';
-            account: 'account';
-            warehouse: 'warehouseName';
-            region: 'us-east2';
-            proxyHost: 'sampleHost';
-            proxyPort: 'samplePort';
-            nonProxyHosts: 'sample';
-            accountType: MultiTenant;
-            organization: 'sampleOrganization';
-          };
-          auth: SnowflakePublic
-          {
-            publicUserName: 'name';
-            privateKeyVaultReference: 'name';
-            passPhraseVaultReference: 'name';
-          };
-        }
-      }#
-    ];
-    target: Flat
+          name: 'test';
+          account: 'account';
+          warehouse: 'warehouseName';
+          region: 'us-east2';
+          proxyHost: 'sampleHost';
+          proxyPort: 'samplePort';
+          nonProxyHosts: 'sample';
+          accountType: MultiTenant;
+          organization: 'sampleOrganization';
+        };
+        auth: SnowflakePublic
+        {
+          publicUserName: 'name';
+          privateKeyVaultReference: 'name';
+          passPhraseVaultReference: 'name';
+        };
+      }
+    }#
+    targetShape: Flat
     {
       targetName: 's3Sink';
-      modelClass: cnas::Person;
-      deduplicationStrategy: None;
-      ingestMode: UnitemporalSnapshot
+      modelClass: test::ServiceResult;
+    }
+    ingestMode: UnitemporalSnapshot
+    {
+      transactionMilestoning: BatchId
       {
-        transactionMilestoning: BatchId
-        {
-          batchIdInFieldName: 'IN_Z';
-          batchIdOutFieldName: 'OUT_Z';
-        }
+        batchIdInName: 'IN_Z';
+        batchIdOutName: 'OUT_Z';
       }
     }
   }
@@ -62,6 +59,15 @@ Persistence cnas::TestPipe
   }
 }
 
+###ExternalFormat
+Binding cnas::TestBinding
+{
+  contentType: 'application/json';
+  modelIncludes:
+  [
+    cnas::Person
+  ];
+}
 
 ###Service
 Service cnas::TestService
@@ -109,9 +115,8 @@ Database cnas::SnowflakeStore
   )
 )
 
-
 ###FileGeneration
-Cpb cnas::cpbGeneration
+AwsPersistence cnas::AwsPersistenceGeneration
 {
   scopeElements: [cnas];
 }
@@ -121,7 +126,7 @@ Cpb cnas::cpbGeneration
 GenerationSpecification cnas::MyGenerationSpecification
 {
   fileGenerations: [
-    cnas::cpbGeneration
+    cnas::AwsPersistenceGeneration
   ];
 }
 
@@ -141,9 +146,9 @@ Class cnas::RawPerson
   age: Integer[1];
 }
 
+Class test::ServiceResult {}
 
 ###Mapping
 Mapping cnas::Mapping
 (
 )
-
