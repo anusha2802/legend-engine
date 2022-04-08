@@ -149,6 +149,31 @@ public class TestRelationalConnectionGrammarParser extends TestGrammarParser.Tes
                 "       passPhraseVaultReference: 'name';\n" +
                 "  };\n" +
                 "}\n");
+        // added new
+        test("###Connection\n" +
+                "RelationalDatabaseConnection meta::mySimpleConnection\n" +
+                "{\n" +
+                "  store: store::Store;\n" +
+                "  type: Snowflake;\n" +
+                "  specification: Snowflake\n" +
+                "  {\n" +
+                "    name: 'test';\n" +
+                "    account: 'account';\n" +
+                "    warehouse: 'warehouseName';\n" +
+                "    region: 'us-east2';\n" +
+                "    proxyHost: 'sampleHost';\n" +
+                "    proxyPort: 'samplePort';\n" +
+                "    nonProxyHosts: 'sample';\n" +
+                "    accountType: MultiTenant;\n" +
+                "    organization: 'sampleOrganization';\n" +
+                "  };\n" +
+                "  auth: SnowflakePublicCloud\n" +
+                "  {" +
+                "       publicUserName: 'name';\n" +
+                "       secretArn: 'name';\n" +
+                "       tokenUrl: 'name';\n" +
+                "  };\n" +
+                "}\n");
         test("###Connection\n" +
                 "RelationalDatabaseConnection meta::mySimpleConnection\n" +
                 "{\n" +

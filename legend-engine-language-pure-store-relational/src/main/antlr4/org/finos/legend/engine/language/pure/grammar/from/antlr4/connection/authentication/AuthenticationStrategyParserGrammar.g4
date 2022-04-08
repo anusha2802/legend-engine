@@ -72,5 +72,27 @@ snowflakePublicAuthPassPhraseVaultRef:  SNOWFLAKE_AUTH_PASSPHRASE_VAULT_REFERENC
 snowflakePublicAuthUserName:  SNOWFLAKE_AUTH_PUBLIC_USERNAME COLON STRING SEMI_COLON
 ;
 
+
+//added new --
+snowflakePublicCloudAuth:               SNOWFLAKE_PUBLIC_CLOUD_AUTH
+                                            BRACE_OPEN
+                                                (
+                                                    snowflakePublicCloudAuthPublicUserName
+                                                    | snowflakePublicCloudAuthSecretArn
+                                                    | snowflakePublicCloudAuthTokenUrl
+                                                )*
+                                            BRACE_CLOSE
+;
+
+snowflakePublicCloudAuthPublicUserName: SNOWFLAKE_AUTH_PUBLIC_USERNAME COLON STRING SEMI_COLON
+;
+snowflakePublicCloudAuthSecretArn:      SNOWFLAKE_AUTH_SECRET_ARN COLON STRING SEMI_COLON
+;
+
+snowflakePublicCloudAuthTokenUrl:       SNOWFLAKE_AUTH_TOKEN_URL COLON STRING SEMI_COLON
+;
+// --
+
+
 gcpApplicationDefaultCredentialsAuth : GCP_APPLICATION_DEFAULT_CREDENTIALS_AUTH
 ;

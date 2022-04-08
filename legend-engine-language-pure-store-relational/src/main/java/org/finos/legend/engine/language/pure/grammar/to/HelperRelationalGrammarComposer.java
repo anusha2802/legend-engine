@@ -724,6 +724,21 @@ public class HelperRelationalGrammarComposer
                     context.getIndentationString() + getTabString(baseIndentation) + "}";
 
         }
+
+        // added new
+        else if (_auth instanceof SnowflakePublicCloudAuthenticationStrategy)
+        {
+            SnowflakePublicCloudAuthenticationStrategy auth = (SnowflakePublicCloudAuthenticationStrategy)_auth;
+            int baseIndentation = 1;
+            return "SnowflakePublicCloud" +
+                    "\n" +
+                    context.getIndentationString() + getTabString(baseIndentation) + "{\n" +
+                    context.getIndentationString() + getTabString(baseIndentation + 1) + "publicUserName: " + convertString(auth.publicUserName, true) + ";\n" +
+                    context.getIndentationString() + getTabString(baseIndentation + 1) + "secretArn: " + convertString(auth.secretArn, true) + ";\n" +
+                    context.getIndentationString() + getTabString(baseIndentation + 1) + "tokenUrl: " + convertString(auth.tokenUrl, true) + ";\n" +
+                    context.getIndentationString() + getTabString(baseIndentation) + "}";
+        }
+
         else if (_auth instanceof GCPApplicationDefaultCredentialsAuthenticationStrategy)
         {
             GCPApplicationDefaultCredentialsAuthenticationStrategy auth = (GCPApplicationDefaultCredentialsAuthenticationStrategy)_auth;

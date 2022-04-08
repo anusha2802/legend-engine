@@ -22,6 +22,7 @@ import org.finos.legend.engine.language.pure.grammar.to.extension.PureGrammarCom
 import org.finos.legend.engine.protocol.pure.v1.model.SourceInformation;
 import org.finos.legend.engine.protocol.pure.v1.model.context.EngineErrorType;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.AuthenticationStrategy;
+import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.SnowflakePublicCloudAuthenticationStrategy;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.postprocessor.PostProcessor;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.specification.DatasourceSpecification;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.model.milestoning.Milestoning;
@@ -46,6 +47,12 @@ public interface IRelationalGrammarComposerExtension extends PureGrammarComposer
     {
         return process(authenticationStrategy, processors, context, "Authentication Strategy", authenticationStrategy.sourceInformation);
     }
+
+    // added new
+    //static String process(SnowflakePublicCloudAuthenticationStrategy snowflakePublicCloudAuthenticationStrategy, List<Function2<SnowflakePublicCloudAuthenticationStrategy, PureGrammarComposerContext, String>> processors, PureGrammarComposerContext context)
+    //{
+    //    return process(snowflakePublicCloudAuthenticationStrategy, processors, context, "Snowflake Public Cloud Authentication Strategy", snowflakePublicCloudAuthenticationStrategy.sourceInformation);
+    //}
 
     static String process(PostProcessor postProcessor, List<Function2<PostProcessor, PureGrammarComposerContext, String>> processors, PureGrammarComposerContext context)
     {

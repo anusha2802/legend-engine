@@ -51,6 +51,26 @@ public class TestRelationalConnectionGrammarRoundtrip extends TestGrammarRoundtr
                 "  };\n" +
                 "}\n");
 
+        // added new
+        test("###Connection\n" +
+                "RelationalDatabaseConnection simple::StaticConnection\n" +
+                "{\n" +
+                "  store: apps::pure::studio::relational::tests::dbInc;\n" +
+                "  type: SqlServer;\n" +
+                "  specification: Static\n" +
+                "  {\n" +
+                "    name: 'name';\n" +
+                "    host: 'host';\n" +
+                "    port: 1234;\n" +
+                "  };\n" +
+                "  auth: SnowflakePublicCloud\n" +
+                "  {\n" +
+                "    publicUserName: 'name';\n" +
+                "    secretArn: 'name';\n" +
+                "    tokenUrl: 'name';\n" +
+                "  };\n" +
+                "}\n");
+
         test("###Connection\n" +
                 "RelationalDatabaseConnection simple::StaticConnection\n" +
                 "{\n" +

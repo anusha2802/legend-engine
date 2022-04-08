@@ -16,6 +16,7 @@ package org.finos.legend.engine.language.pure.grammar.from.authentication;
 
 import org.finos.legend.engine.language.pure.grammar.from.PureGrammarParserUtility;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.authentication.AuthenticationStrategyParserGrammar;
+import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.authentication.SnowflakePublicCloudAuthenticationStrategyParserGrammar;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.*;
 
 public class AuthenticationStrategyParseTreeWalker
@@ -86,5 +87,26 @@ public class AuthenticationStrategyParseTreeWalker
         GCPApplicationDefaultCredentialsAuthenticationStrategy authStrategy = new GCPApplicationDefaultCredentialsAuthenticationStrategy();
         authStrategy.sourceInformation = code.getSourceInformation();
         return authStrategy;
+    }
+
+    //added new
+    public AuthenticationStrategy visitSnowflakePublicCloudAuthenticationStrategy(AuthenticationStrategySourceCode code, AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthContext snowflakePublicCloudAuth) {
+
+        SnowflakePublicCloudAuthenticationStrategy snowflakePublicCloudAuthenticationStrategy = new SnowflakePublicCloudAuthenticationStrategy();
+        snowflakePublicCloudAuthenticationStrategy.sourceInformation = code.getSourceInformation();
+
+        //public user name
+        AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthPublicUserNameContext publicUserName = PureGrammarParserUtility.validateAndExtractRequiredField(snowflakePublicCloudAuth.snowflakePublicCloudAuthPublicUserName(), "publicUserName", code.getSourceInformation());
+        snowflakePublicCloudAuthenticationStrategy.publicUserName = PureGrammarParserUtility.fromGrammarString(publicUserName.STRING().getText(), true);
+
+        //secret arn
+        AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthSecretArnContext secretArn = PureGrammarParserUtility.validateAndExtractRequiredField(snowflakePublicCloudAuth.snowflakePublicCloudAuthSecretArn(), "secretArn", code.getSourceInformation());
+        snowflakePublicCloudAuthenticationStrategy.secretArn = PureGrammarParserUtility.fromGrammarString(secretArn.STRING().getText(), true);
+
+        // token url
+        AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthTokenUrlContext tokenUrl = PureGrammarParserUtility.validateAndExtractRequiredField(snowflakePublicCloudAuth.snowflakePublicCloudAuthTokenUrl(), "tokenUrl", code.getSourceInformation());
+        snowflakePublicCloudAuthenticationStrategy.tokenUrl = PureGrammarParserUtility.fromGrammarString(tokenUrl.STRING().getText(), true);
+
+        return snowflakePublicCloudAuthenticationStrategy;
     }
 }
