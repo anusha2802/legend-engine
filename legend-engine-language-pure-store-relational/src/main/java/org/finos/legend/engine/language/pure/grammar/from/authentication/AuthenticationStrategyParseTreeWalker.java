@@ -16,7 +16,6 @@ package org.finos.legend.engine.language.pure.grammar.from.authentication;
 
 import org.finos.legend.engine.language.pure.grammar.from.PureGrammarParserUtility;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.authentication.AuthenticationStrategyParserGrammar;
-import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.authentication.SnowflakePublicCloudAuthenticationStrategyParserGrammar;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.*;
 
 public class AuthenticationStrategyParseTreeWalker
@@ -90,7 +89,7 @@ public class AuthenticationStrategyParseTreeWalker
     }
 
     //added new
-    public AuthenticationStrategy visitSnowflakePublicCloudAuthenticationStrategy(AuthenticationStrategySourceCode code, AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthContext snowflakePublicCloudAuth) {
+    public SnowflakePublicCloudAuthenticationStrategy visitSnowflakePublicCloudAuthenticationStrategy(AuthenticationStrategySourceCode code, AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthContext snowflakePublicCloudAuth) {
 
         SnowflakePublicCloudAuthenticationStrategy snowflakePublicCloudAuthenticationStrategy = new SnowflakePublicCloudAuthenticationStrategy();
         snowflakePublicCloudAuthenticationStrategy.sourceInformation = code.getSourceInformation();
