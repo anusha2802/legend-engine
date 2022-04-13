@@ -167,11 +167,10 @@ public class TestRelationalConnectionGrammarParser extends TestGrammarParser.Tes
                 "    accountType: MultiTenant;\n" +
                 "    organization: 'sampleOrganization';\n" +
                 "  };\n" +
-                "  auth: SnowflakePublicCloud\n" +
+                "  auth: OAuth\n" +
                 "  {" +
-                "       publicUserName: 'name';\n" +
                 "       secretArn: 'name';\n" +
-                "       tokenUrl: 'name';\n" +
+                "       discoveryUrl: 'name';\n" +
                 "  };\n" +
                 "}\n");
         test("###Connection\n" +

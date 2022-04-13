@@ -16,8 +16,6 @@ package org.finos.legend.engine.language.pure.grammar.to;
 
 import org.eclipse.collections.impl.utility.LazyIterate;
 import org.eclipse.collections.impl.utility.ListIterate;
-import org.finos.legend.engine.language.pure.grammar.from.PureGrammarParserUtility;
-import org.finos.legend.engine.language.pure.grammar.from.datasource.DataSourceSpecificationSourceCode;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.mapping.PropertyMapping;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.*;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.postprocessor.Mapper;
@@ -726,16 +724,15 @@ public class HelperRelationalGrammarComposer
         }
 
         // added new
-        else if (_auth instanceof SnowflakePublicCloudAuthenticationStrategy)
+        else if (_auth instanceof OAuthAuthenticationStrategy)
         {
-            SnowflakePublicCloudAuthenticationStrategy auth = (SnowflakePublicCloudAuthenticationStrategy)_auth;
+            OAuthAuthenticationStrategy auth = (OAuthAuthenticationStrategy)_auth;
             int baseIndentation = 1;
-            return "SnowflakePublicCloud" +
+            return "OAuth" +
                     "\n" +
                     context.getIndentationString() + getTabString(baseIndentation) + "{\n" +
-                    context.getIndentationString() + getTabString(baseIndentation + 1) + "publicUserName: " + convertString(auth.publicUserName, true) + ";\n" +
                     context.getIndentationString() + getTabString(baseIndentation + 1) + "secretArn: " + convertString(auth.secretArn, true) + ";\n" +
-                    context.getIndentationString() + getTabString(baseIndentation + 1) + "tokenUrl: " + convertString(auth.tokenUrl, true) + ";\n" +
+                    context.getIndentationString() + getTabString(baseIndentation + 1) + "discoveryUrl: " + convertString(auth.discoveryUrl, true) + ";\n" +
                     context.getIndentationString() + getTabString(baseIndentation) + "}";
         }
 

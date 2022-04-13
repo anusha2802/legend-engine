@@ -25,9 +25,9 @@ SNOWFLAKE_AUTH_PASSPHRASE_VAULT_REFERENCE:  'passPhraseVaultReference';
 SNOWFLAKE_AUTH_PUBLIC_USERNAME:             'publicUserName';
 
 // added new
-SNOWFLAKE_PUBLIC_CLOUD_AUTH:                'SnowflakePublicCloud';
-SNOWFLAKE_AUTH_SECRET_ARN:                  'secretArn';
-SNOWFLAKE_AUTH_TOKEN_URL:                   'tokenUrl';
+OAUTH:                                      'OAuth';
+OAUTH_SECRET_ARN:                           'secretArn';
+OAUTH_DISCOVERY_URL:                        'discoveryUrl';
 
 
 PROJECT:                                                    'projectId';

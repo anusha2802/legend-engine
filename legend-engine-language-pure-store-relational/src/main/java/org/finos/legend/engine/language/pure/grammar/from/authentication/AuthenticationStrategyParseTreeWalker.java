@@ -89,23 +89,19 @@ public class AuthenticationStrategyParseTreeWalker
     }
 
     //added new
-    public SnowflakePublicCloudAuthenticationStrategy visitSnowflakePublicCloudAuthenticationStrategy(AuthenticationStrategySourceCode code, AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthContext snowflakePublicCloudAuth) {
+    public OAuthAuthenticationStrategy visitOAuthAuthenticationStrategy(AuthenticationStrategySourceCode code, AuthenticationStrategyParserGrammar.OAuthContext oAuth) {
 
-        SnowflakePublicCloudAuthenticationStrategy snowflakePublicCloudAuthenticationStrategy = new SnowflakePublicCloudAuthenticationStrategy();
-        snowflakePublicCloudAuthenticationStrategy.sourceInformation = code.getSourceInformation();
-
-        //public user name
-        AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthPublicUserNameContext publicUserName = PureGrammarParserUtility.validateAndExtractRequiredField(snowflakePublicCloudAuth.snowflakePublicCloudAuthPublicUserName(), "publicUserName", code.getSourceInformation());
-        snowflakePublicCloudAuthenticationStrategy.publicUserName = PureGrammarParserUtility.fromGrammarString(publicUserName.STRING().getText(), true);
+        OAuthAuthenticationStrategy oAuthAuthenticationStrategy = new OAuthAuthenticationStrategy();
+        oAuthAuthenticationStrategy.sourceInformation = code.getSourceInformation();
 
         //secret arn
-        AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthSecretArnContext secretArn = PureGrammarParserUtility.validateAndExtractRequiredField(snowflakePublicCloudAuth.snowflakePublicCloudAuthSecretArn(), "secretArn", code.getSourceInformation());
-        snowflakePublicCloudAuthenticationStrategy.secretArn = PureGrammarParserUtility.fromGrammarString(secretArn.STRING().getText(), true);
+        AuthenticationStrategyParserGrammar.OAuthSecretArnContext secretArn = PureGrammarParserUtility.validateAndExtractRequiredField(oAuth.oAuthSecretArn(), "secretArn", code.getSourceInformation());
+        oAuthAuthenticationStrategy.secretArn = PureGrammarParserUtility.fromGrammarString(secretArn.STRING().getText(), true);
 
         // token url
-        AuthenticationStrategyParserGrammar.SnowflakePublicCloudAuthTokenUrlContext tokenUrl = PureGrammarParserUtility.validateAndExtractRequiredField(snowflakePublicCloudAuth.snowflakePublicCloudAuthTokenUrl(), "tokenUrl", code.getSourceInformation());
-        snowflakePublicCloudAuthenticationStrategy.tokenUrl = PureGrammarParserUtility.fromGrammarString(tokenUrl.STRING().getText(), true);
+        AuthenticationStrategyParserGrammar.OAuthDiscoveryUrlContext discoveryUrl = PureGrammarParserUtility.validateAndExtractRequiredField(oAuth.oAuthDiscoveryUrl(), "discoveryUrl", code.getSourceInformation());
+        oAuthAuthenticationStrategy.discoveryUrl = PureGrammarParserUtility.fromGrammarString(discoveryUrl.STRING().getText(), true);
 
-        return snowflakePublicCloudAuthenticationStrategy;
+        return oAuthAuthenticationStrategy;
     }
 }

@@ -63,11 +63,10 @@ public class TestRelationalConnectionGrammarRoundtrip extends TestGrammarRoundtr
                 "    host: 'host';\n" +
                 "    port: 1234;\n" +
                 "  };\n" +
-                "  auth: SnowflakePublicCloud\n" +
+                "  auth: OAuth\n" +
                 "  {\n" +
-                "    publicUserName: 'name';\n" +
                 "    secretArn: 'name';\n" +
-                "    tokenUrl: 'name';\n" +
+                "    discoveryUrl: 'name';\n" +
                 "  };\n" +
                 "}\n");
 
