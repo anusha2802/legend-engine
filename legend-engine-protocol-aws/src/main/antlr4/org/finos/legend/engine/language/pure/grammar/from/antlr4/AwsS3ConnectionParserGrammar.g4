@@ -1,10 +1,10 @@
-parser grammar S3ConnectionParserGrammar;
+parser grammar AwsS3ConnectionParserGrammar;
 
 import CoreParserGrammar;
 
 options
 {
-    tokenVocab = S3ConnectionLexerGrammar;
+    tokenVocab = AwsS3ConnectionLexerGrammar;
 }
 
 // -------------------------------------- IDENTIFIER --------------------------------------

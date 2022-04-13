@@ -4,13 +4,13 @@ import org.antlr.v4.runtime.Vocabulary;
 import org.eclipse.collections.impl.list.mutable.FastList;
 import org.eclipse.collections.impl.list.mutable.ListAdapter;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.ConnectionParserGrammar;
-import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.S3ConnectionParserGrammar;
+import org.finos.legend.engine.language.pure.grammar.from.antlr4.AwsS3ConnectionParserGrammar;
 import org.junit.Test;
 
 import java.util.List;
 
 
-public class TestS3ConnectionGrammarParser extends TestGrammarParser.TestGrammarParserTestSuite
+public class TestAwsS3ConnectionGrammarParser extends TestGrammarParser.TestGrammarParserTestSuite
 {
     @Override
     public Vocabulary getParserGrammarVocabulary()
@@ -22,7 +22,7 @@ public class TestS3ConnectionGrammarParser extends TestGrammarParser.TestGrammar
     public List<Vocabulary> getDelegatedParserGrammarVocabulary()
     {
         return FastList.newListWith(
-                S3ConnectionParserGrammar.VOCABULARY
+                AwsS3ConnectionParserGrammar.VOCABULARY
         );
     }
 
@@ -30,7 +30,7 @@ public class TestS3ConnectionGrammarParser extends TestGrammarParser.TestGrammar
     public String getParserGrammarIdentifierInclusionTestCode(List<String> keywords)
     {
         return "###Connection\n" +
-                "S3Connection " + ListAdapter.adapt(keywords).makeString("::") + "\n" +
+                "AwsS3Connection " + ListAdapter.adapt(keywords).makeString("::") + "\n" +
                 "{\n" +
                 "  store: model::firm::Person;\n" +
                 "  partition: AWS;\n" +
@@ -44,19 +44,19 @@ public class TestS3ConnectionGrammarParser extends TestGrammarParser.TestGrammar
     {
         // Missing fields
         test("###Connection\n" +
-                "S3Connection meta::mySimpleConnection\n" +
+                "AwsS3Connection meta::mySimpleConnection\n" +
                 "{\n" +
                 "  store: model::firm::Person;\n" +
                 "}\n\n", "PARSER error at [2:1-5:1]: Field 'partition' is required");
         test("###Connection\n" +
-                "S3Connection meta::mySimpleConnection\n" +
+                "AwsS3Connection meta::mySimpleConnection\n" +
                 "{\n" +
                 "  partition: AWS;\n" +
                 "  store: model::firm::Person;\n" +
                 "}\n\n", "PARSER error at [2:1-6:1]: Field 'region' is required");
         // Correctly written
         test("###Connection\n" +
-                "S3Connection meta::mySimpleConnection\n" +
+                "AwsS3Connection meta::mySimpleConnection\n" +
                 "{\n" +
                 "  store: store::Store;\n" +
                 "  partition: AWS;\n" +

@@ -1,4 +1,4 @@
-lexer grammar S3ConnectionLexerGrammar;
+lexer grammar AwsS3ConnectionLexerGrammar;
 
 import CoreLexerGrammar;
 
@@ -13,8 +13,6 @@ STORE:                                      'store';
 //**********
 // S3 CONNECTION
 //**********
-
-//S3_CONNECTION:                              'S3Connection';
 
 S3_PARTITION:                               'partition';
 S3_REGION:                                  'region';
