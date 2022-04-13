@@ -30,7 +30,8 @@ import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.connect
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.mapping.AssociationMapping;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.mapping.ClassMapping;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.mapping.mappingTest.InputData;
-import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.RelationalDatabaseConnection;
+import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.*;
+import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.AwsPartitionVisitor;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.AuthenticationStrategy;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.postprocessor.MapperPostProcessor;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.postprocessor.PostProcessor;
@@ -208,9 +209,49 @@ public class RelationalGrammarComposerExtension implements IRelationalGrammarCom
                         : "") +
                     context.getIndentationString() + "}");
             }
+            else if (connectionValue instanceof S3Connection) {
+                RelationalGrammarComposerContext ctx = RelationalGrammarComposerContext.Builder.newInstance(context).build();
+                S3Connection s3Connection = (S3Connection) connectionValue;
+                int baseIndentation = 0;
+
+                return Tuples.pair(RelationalGrammarParserExtension.S3_CONNECTION_TYPE, context.getIndentationString() + getTabString(baseIndentation) + "{\n" +
+                        (s3Connection.element != null ? (context.getIndentationString() + getTabString(baseIndentation + 1) + "store: " + s3Connection.element + ";\n") : "") +
+                        context.getIndentationString() + getTabString(baseIndentation + 1) + renderPartition(s3Connection.partition) +
+                        context.getIndentationString() + getTabString(baseIndentation + 1) + "region: '" + s3Connection.region + "';\n" +
+                        context.getIndentationString() + getTabString(baseIndentation + 1) + "bucket: '" + s3Connection.bucket + "';\n" +
+                        context.getIndentationString() + "}");
+            }
             return null;
         });
     }
+
+    //added new
+    public static String renderPartition(AwsPartition partition)
+    {
+        return partition.accept(new PartitionComposer());
+    }
+    private static class PartitionComposer implements AwsPartitionVisitor<String>
+    {
+        @Override
+        public String visit(AWS val)
+        {
+            return "partition: AWS;\n";
+        }
+
+        @Override
+        public String visit(AWS_CN val)
+        {
+            return "partition: AWS_CN;\n";
+        }
+
+        @Override
+        public String visit(AWS_US_GOV val)
+        {
+            return "partition: AWS_US_GOV;\n";
+        }
+
+    }
+
 
     private static String renderDatabase(Database database)
     {

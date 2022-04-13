@@ -25,6 +25,8 @@ import org.finos.legend.engine.language.pure.grammar.from.antlr4.RelationalLexer
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.RelationalParserGrammar;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.RelationalDatabaseConnectionLexerGrammar;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.RelationalDatabaseConnectionParserGrammar;
+import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.S3ConnectionLexerGrammar;
+import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.S3ConnectionParserGrammar;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.authentication.AuthenticationStrategyLexerGrammar;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.authentication.AuthenticationStrategyParserGrammar;
 import org.finos.legend.engine.language.pure.grammar.from.antlr4.connection.datasource.DataSourceSpecificationLexerGrammar;
@@ -49,6 +51,7 @@ import org.finos.legend.engine.protocol.pure.v1.model.context.EngineErrorType;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.mapping.mappingTest.InputData;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.section.DefaultCodeSection;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.RelationalDatabaseConnection;
+import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.S3Connection;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.authentication.AuthenticationStrategy;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.postprocessor.PostProcessor;
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.connection.specification.DatasourceSpecification;
@@ -63,6 +66,8 @@ import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.r
 import org.finos.legend.engine.protocol.pure.v1.model.packageableElement.store.relational.model.operation.RelationalOperationElement;
 import org.finos.legend.engine.shared.core.operational.errorManagement.EngineException;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -72,6 +77,7 @@ public class RelationalGrammarParserExtension implements IRelationalGrammarParse
     public static final String NAME = "Relational";
     public static final String RELATIONAL_MAPPING_ELEMENT_TYPE = "Relational";
     public static final String RELATIONAL_DATABASE_CONNECTION_TYPE = "RelationalDatabaseConnection";
+    public static final String S3_CONNECTION_TYPE = "S3Connection";
 
     @Override
     public Iterable<? extends SectionParser> getExtraSectionParsers()
@@ -127,7 +133,18 @@ public class RelationalGrammarParserExtension implements IRelationalGrammarParse
     @Override
     public Iterable<? extends ConnectionValueParser> getExtraConnectionParsers()
     {
-        return Collections.singletonList(ConnectionValueParser.newParser(RELATIONAL_DATABASE_CONNECTION_TYPE, connectionValueSourceCode ->
+        List<ConnectionValueParser> connections = new ArrayList<>();
+        Collection<ConnectionValueParser> x = Collections.singletonList(ConnectionValueParser.newParser(S3_CONNECTION_TYPE, connectionValueSourceCode ->
+        {
+            SourceCodeParserInfo parserInfo = getS3ConnectionParserInfo(connectionValueSourceCode);
+            S3ConnectionParseTreeWalker walker = new S3ConnectionParseTreeWalker(parserInfo.walkerSourceInformation);
+            S3Connection s3Connection = new S3Connection();
+            s3Connection.sourceInformation = connectionValueSourceCode.sourceInformation;
+            walker.visitS3ConnectionValue((S3ConnectionParserGrammar.DefinitionContext) parserInfo.rootContext, s3Connection);
+            return s3Connection;
+        }));
+        connections.addAll(x);
+        Collection<ConnectionValueParser> y = Collections.singletonList(ConnectionValueParser.newParser(RELATIONAL_DATABASE_CONNECTION_TYPE, connectionValueSourceCode ->
         {
             SourceCodeParserInfo parserInfo = getRelationalDatabaseConnectionParserInfo(connectionValueSourceCode);
             RelationalDatabaseConnectionParseTreeWalker walker = new RelationalDatabaseConnectionParseTreeWalker(parserInfo.walkerSourceInformation);
@@ -136,7 +153,10 @@ public class RelationalGrammarParserExtension implements IRelationalGrammarParse
             walker.visitRelationalDatabaseConnectionValue((RelationalDatabaseConnectionParserGrammar.DefinitionContext) parserInfo.rootContext, connectionValue, connectionValueSourceCode.isEmbedded);
             return connectionValue;
         }));
+        connections.addAll(y);
+        return connections;
     }
+
 
     @Override
     public List<java.util.function.Function<DataSourceSpecificationSourceCode, DatasourceSpecification>> getExtraDataSourceSpecificationParsers()
@@ -346,6 +366,21 @@ public class RelationalGrammarParserExtension implements IRelationalGrammarParse
         parser.addErrorListener(errorListener);
         return new SourceCodeParserInfo(connectionValueSourceCode.code, input, connectionValueSourceCode.sourceInformation, connectionValueSourceCode.walkerSourceInformation, lexer, parser, parser.definition());
     }
+
+    // added new
+    private static SourceCodeParserInfo getS3ConnectionParserInfo(ConnectionValueSourceCode connectionValueSourceCode)
+    {
+        CharStream input = CharStreams.fromString(connectionValueSourceCode.code);
+        ParserErrorListener errorListener = new ParserErrorListener(connectionValueSourceCode.walkerSourceInformation);
+        S3ConnectionLexerGrammar lexer = new S3ConnectionLexerGrammar(input);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(errorListener);
+        S3ConnectionParserGrammar parser = new S3ConnectionParserGrammar(new CommonTokenStream(lexer));
+        parser.removeErrorListeners();
+        parser.addErrorListener(errorListener);
+        return new SourceCodeParserInfo(connectionValueSourceCode.code, input, connectionValueSourceCode.sourceInformation, connectionValueSourceCode.walkerSourceInformation, lexer, parser, parser.definition());
+    }
+
 
     public static RelationalOperationElement parseRelationalOperationElement(String code, boolean returnSourceInfo)
     {
