@@ -64,7 +64,7 @@ public class AuthenticationStrategyBuilder implements AuthenticationStrategyVisi
         {
             return new Root_meta_pure_alloy_connections_alloy_authentication_OAuthAuthenticationStrategy_Impl("")
                     ._secretArn(((OAuthAuthenticationStrategy) authenticationStrategy).secretArn)
-                    ._tokenUrl(((OAuthAuthenticationStrategy) authenticationStrategy).discoveryUrl);
+                    ._discoveryUrl(((OAuthAuthenticationStrategy) authenticationStrategy).discoveryUrl);
         }
 
         else if (authenticationStrategy instanceof GCPApplicationDefaultCredentialsAuthenticationStrategy)
