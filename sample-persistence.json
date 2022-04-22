@@ -6,37 +6,9 @@ Persistence cnas::TestPipe
   service: cnas::TestService;
   persister: Batch
   {
-  binding: cnas::TestBinding;
-    connection:
-    #{
-      RelationalDatabaseConnection
-      {
-        store: cnas::SnowflakeStore;
-        type: Snowflake;
-        specification: Snowflake
-        {
-          name: 'test';
-          account: 'account';
-          warehouse: 'warehouseName';
-          region: 'us-east2';
-          proxyHost: 'sampleHost';
-          proxyPort: 'samplePort';
-          nonProxyHosts: 'sample';
-          accountType: MultiTenant;
-          organization: 'sampleOrganization';
-        };
-        auth: SnowflakePublic
-        {
-          publicUserName: 'name';
-          privateKeyVaultReference: 'name';
-          passPhraseVaultReference: 'name';
-        };
-      }
-    }#
-    targetShape: Flat
+    sink: Relational
     {
-      targetName: 's3Sink';
-      modelClass: cnas::Person;
+      connection: cnas::SnowflakeConnection;
     }
     ingestMode: UnitemporalSnapshot
     {
@@ -45,6 +17,12 @@ Persistence cnas::TestPipe
         batchIdInName: 'IN_Z';
         batchIdOutName: 'OUT_Z';
       }
+    }
+    targetShape: Flat
+    {
+      modelClass: cnas::Person;
+      targetName: 'snowflakeSink';
+      deduplicationStrategy: None;
     }
   }
   notifier:
@@ -59,20 +37,11 @@ Persistence cnas::TestPipe
   }
 }
 
-###ExternalFormat
-Binding cnas::TestBinding
-{
-  contentType: 'application/json';
-  modelIncludes:
-  [
-    cnas::Person
-  ];
-}
 
 ###Service
 Service cnas::TestService
 {
-  pattern: 'url/myUrl/';
+  pattern: '/url/myUrl/';
   owners:
   [
     'ownerName',
@@ -82,15 +51,9 @@ Service cnas::TestService
   autoActivateUpdates: true;
   execution: Single
   {
-    query: src: cnas::RawPerson[1]|$src.firstName;
+    query: |cnas::Person.all()->graphFetch(#{cnas::Person{name,age}}#)->serialize(#{cnas::Person{name,age}}#);
     mapping: cnas::Mapping;
-    runtime:
-    #{
-      mappings:
-      [
-        cnas::Mapping
-      ];
-    }#;
+    runtime: cnas::SnowflakeRuntime;
   }
   test: Single
   {
@@ -105,15 +68,26 @@ Service cnas::TestService
 ###Relational
 Database cnas::SnowflakeStore
 (
-  Schema SAMPLE
+  Schema SAMPLE_SCHEMA
   (
     Table DEMO_TABLE
     (
-      "name" VARCHAR(100) PRIMARY KEY,
-      "age" NUMERIC(38, 0)
+      nameindb VARCHAR(100) PRIMARY KEY,
+      ageindb BIGINT
     )
   )
 )
+
+
+###ExternalFormat
+Binding cnas::TestBinding
+{
+  contentType: 'application/json';
+  modelIncludes: [
+    cnas::Person
+  ];
+}
+
 
 ###FileGeneration
 AwsPersistence cnas::AwsPersistenceGeneration
@@ -130,25 +104,66 @@ GenerationSpecification cnas::MyGenerationSpecification
   ];
 }
 
-
 ###Pure
 Class cnas::Person
 {
-  firstName: String[1];
-  lastName: String[1];
+  name: String[1];
   age: Integer[1];
 }
 
-Class cnas::RawPerson
-{
-  firstName: String[1];
-  lastName: String[1];
-  age: Integer[1];
-}
-
-Class test::ServiceResult {}
 
 ###Mapping
 Mapping cnas::Mapping
 (
+  cnas::Person: Relational
+  {
+    ~primaryKey
+    (
+      [cnas::SnowflakeStore]SAMPLE_SCHEMA.DEMO_TABLE.nameindb
+    )
+    ~mainTable [cnas::SnowflakeStore]SAMPLE_SCHEMA.DEMO_TABLE
+    name: [cnas::SnowflakeStore]SAMPLE_SCHEMA.DEMO_TABLE.nameindb,
+    age: [cnas::SnowflakeStore]SAMPLE_SCHEMA.DEMO_TABLE.ageindb
+  }
 )
+
+
+###Connection
+RelationalDatabaseConnection cnas::SnowflakeConnection
+{
+  store: cnas::SnowflakeStore;
+  type: Snowflake;
+  specification: Snowflake
+  {
+    name: 'DATABASENAME';
+    account: 'sfBLAHeast1d01';
+    warehouse: 'DEV_WH_SMALL';
+    region: 'us-east-1';
+    organization: 'aws or empty';
+    role: 'DEV_RO_ROLE';
+  };
+  auth: SnowflakePublic
+  {
+    publicUserName: 'DEV_USER_RO';
+    privateKeyVaultReference: 'privateKeyRef';
+    passPhraseVaultReference: 'passPhraseRef';
+  };
+}
+
+
+###Runtime
+Runtime cnas::SnowflakeRuntime
+{
+  mappings:
+  [
+    cnas::Mapping
+  ];
+  connections:
+  [
+    cnas::SnowflakeStore:
+    [
+      connection1: cnas::SnowflakeConnection
+    ]
+  ];
+}
+
